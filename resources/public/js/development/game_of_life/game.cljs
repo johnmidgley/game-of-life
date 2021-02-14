@@ -15,16 +15,15 @@
 (defn count-neighbors [g r c]
   (count (filter #(> % 0) (neighbor-vals g r c))))
 
+(defn iterate-cell [g r c v]
+  (let [n (count-neighbors g r c)]
+    (if (or (= 3 n)
+            (and (= 2 n) (<= v 0)))
+      1 
+      (if (> v 0) -1 v))))
+
 (defn iterate-grid [g]
-  (let [num-rows (count g)
-        num-cols (count (first g))]
-    (into []
-          (for [r (range num-rows)]
-               (into []
-                     (for [c (range num-cols)]
-                       (let [n (count-neighbors g r c)
-                             v (get-in g [r c])]
-                         (if (or (= 3 n)
-                                 (and (= 2 n) (= 0 v)))
-                           1
-                           0))))))))
+  (vec (for [[r row] (map-indexed list g)]
+         (vec (for [[c v] (map-indexed list row)]
+                (iterate-cell g r c v))))))
+

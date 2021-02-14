@@ -12,14 +12,14 @@
   (prn (pstr v)))
 
 (def config 
-  {:grid-size [50 50] ;[rows cols]
+  {:grid-size [100 100] ;[rows cols]
    :canvas-size [1000 1000] ;[width height] in pixels
    })
 
 
 (defn setup []
   ; Set frame rate to 30 frames per second.
-  (q/frame-rate 1)
+  (q/frame-rate 5)
   ; circle color and position.
   {:cell-width (/ (-> config :canvas-size first)
                 (-> config :grid-size second))
@@ -39,9 +39,11 @@
             [c cell] (map-indexed list row)]
       (q/with-translation [(* c (:cell-width state)) 
                            (* r (:cell-height state))]
-        (if (zero? cell)
-          (q/fill 100 100 100)
-          (q/fill 0 255 0))
+        (apply q/fill
+               (cond
+                 (> cell 0) [0 255 0]
+                 (< cell 0) [255 0 0]
+                 :else [100 100 100]))
         (q/rect 1 1 (dec (:cell-width state)) (dec (:cell-height state)))))))
 
 ; this function is called in index.html
